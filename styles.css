@@ -1,0 +1,39 @@
+#chess-board{
+    width: 320px;
+    height: 320px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.square{
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    position: relative;
+}
+
+.square svg{
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    position: relative;
+    z-index: -9;
+}
+
+.pieces{
+    position: relative;
+    z-index: 9;
+}
+
+.path{
+    position: relative;
+    z-index: -10;
+}
+
+.teal{
+    background-color:teal;
+}
+.mint-green{
+    background-color: #99edc3;
+}
+
