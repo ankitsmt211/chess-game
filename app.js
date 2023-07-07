@@ -85,15 +85,16 @@ function dragdrop(e){
             e.target.parentNode.append(chosenElement)
             e.target.remove()
             console.log(chosenElement.classList)
-            if(chosenElement.classList.contains('pawn')){
-                chosenElement.classList.add('moved')
-    }
+            pieceMoved()
             changePlayer()
         }
 
         else if(isValidMove(e.target)){
-            chosenElement.classList.add('moved')
+            if(chosenElement.classList.contains('pawn')){
+                chosenElement.classList.add('moved')
+            }
             e.target.append(chosenElement)
+            pieceMoved()
             changePlayer()
         }
         
@@ -143,6 +144,11 @@ function isValidMove(target){
 
        case 'rook':
             return validateRookmove(target,currentPosition,targetPosition)
+
+            break;
+
+        case 'knight':
+            return validateKnightMoves(target,currentPosition,targetPosition)
 
             break;
        
@@ -291,4 +297,41 @@ function checkIfRankContainsPiece(target,currentPosition,targetPosition){
     return !containsPiece
 
 }
+
+
+function validateKnightMoves(target,currentPosition,targetPosition){
+
+    if(target?.classList.contains(NowPlays)){
+        console.log('it has same color piece')
+        return false
+    }
+
+    //check if move is valid
+
+    //todo: for now knight moves are hardcoded, should be a better way
+
+    const possiblePositions = new Set();
+
+    //-8 reflects going to a row up
+    //+8 reflects going one row down
+    //other int values reflect column movements
+    possiblePositions.add(currentPosition-8-2)
+    possiblePositions.add(currentPosition+8-2)
+    possiblePositions.add(currentPosition-8+2)
+    possiblePositions.add(currentPosition+8+2)
+    possiblePositions.add(currentPosition+8+8-1)
+    possiblePositions.add(currentPosition+8+8+1)
+    possiblePositions.add(currentPosition-8-8+1)
+    possiblePositions.add(currentPosition-8-8-1)
+
+    if(possiblePositions.has(targetPosition)){
+        return true
+    }
+
+    else{
+        return false
+    }
+
+}
+
 
