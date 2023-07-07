@@ -3,6 +3,8 @@
     height: 320px;
     display: flex;
     flex-wrap: wrap;
+    margin: auto;
+    margin-top: 10vh;
 }
 
 .square{
@@ -37,3 +39,8 @@
     background-color: #99edc3;
 }
 
+#player{
+    text-align: center;
+    margin-top: 50px;
+    font-size: 50px;
+}

@@ -59,12 +59,8 @@ let startPosition
 
 
 function dragstart(e){
-    //console.log(e.target)
     startPosition = e.target.parentNode.getAttribute('square-id')
-   // console.log(targetSquare)
-
    chosenElement = e.target
-
 }
 
 function dragover(e){
@@ -131,7 +127,7 @@ function reverseIds(){
 
 function isValidMove(target){
     const currentPosition = parseInt(startPosition)
-    //grabs the class at first index
+    //grabs the class at first index aka colour of chessmen
     const chessman = chosenElement.classList.item(0)
 
     //to validate first pawn move
@@ -180,38 +176,46 @@ function validatePawnMove(target,currentPosition,targetPosition,hasMovedOnce){
         }
     }
 
-    else return false
+    else {
+        return false
+    }
 }
 
 
 function validateRookmove(target,currentPosition,targetPosition){
+
     if(((targetPosition % 8) === (currentPosition % 8) ) || (parseInt(targetPosition/8))===parseInt(currentPosition/8)){
         const targetOnSameFile = (targetPosition % 8 )===(currentPosition % 8)?true:false
 
         if(targetOnSameFile){
-            return checkifFilecontainsPiece(target,currentPosition,targetPosition)
+            //validates moves on same file
+            return checkIfFileContainsPiece(target,currentPosition,targetPosition)
+        }
+
+        else{
+            //validates moves on same rank
+            return checkIfRankContainsPiece(target,currentPosition,targetPosition)
         }
        
     }
 }
 
-function checkifFilecontainsPiece(target,currentPosition,targetPosition){
+function checkIfFileContainsPiece(target,currentPosition,targetPosition){
     let containsPiece = false
-    //console.log(target.firstChild.classList+"     "+NowPlays)
     if(target?.classList.contains(NowPlays)){
-        console.log('invalid move')
         return containsPiece
     }
+
     squares.forEach(square=>{
         const checkId = Number(square.getAttribute('square-id'))
 
-        //check forward
+        //check forward on same file 
         if(targetPosition > currentPosition){
            if((checkId%8)===(currentPosition%8)){
             if((checkId<targetPosition) && (checkId>currentPosition)){
-                //console.log(square.firstChild?.classList.contains('pieces') +'square id '+checkId)
+                
                 if(square.firstChild? true:false){
-                   // console.log(square.firstChild.classList)
+                   
                     if(square.firstChild.classList.contains('pieces')){
                         containsPiece=true
                     }
@@ -221,11 +225,13 @@ function checkifFilecontainsPiece(target,currentPosition,targetPosition){
         }
 
         else if(targetPosition < currentPosition){
-            //check backward
+            //check backwards on same file
             if((checkId%8)===(currentPosition%8)){
+
                 if(checkId > targetPosition && checkId<currentPosition){
+
                     if(square.firstChild? true:false){
-                       // console.log(square.firstChild.classList)
+                       
                         if(square.firstChild.classList.contains('pieces')){
                             containsPiece=true
                         }
@@ -234,7 +240,55 @@ function checkifFilecontainsPiece(target,currentPosition,targetPosition){
             }
         }
     })
-    //console.log('here')
     return !containsPiece
+}
+
+
+function checkIfRankContainsPiece(target,currentPosition,targetPosition){
+    let containsPiece = false
+
+    //checks if target square has same colour chessmen
+    if(target?.classList.contains(NowPlays)){
+        
+          return containsPiece
+      }
+
+    squares.forEach(square=>{
+        const checkId = Number(square.getAttribute('square-id'))
+
+        //check left side on rank
+        if(targetPosition > currentPosition){
+            if(parseInt(checkId/8) === parseInt(currentPosition/8)){
+                if(checkId<targetPosition && checkId>currentPosition){
+                    if(square.firstChild? true:false){
+                    
+                         if(square.firstChild.classList.contains('pieces')){
+                             containsPiece=true
+                         }
+                     }
+                }
+            }
+        }
+
+        //check right side on rank
+
+        else if(targetPosition < currentPosition){
+
+            if(parseInt(checkId/8)===parseInt(currentPosition/8)){
+                if(checkId > targetPosition && checkId<currentPosition){
+                    console.log('square-id: '+checkId)
+                    if(square.firstChild? true:false){
+                    
+                        if(square.firstChild.classList.contains('pieces')){
+                            containsPiece=true
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    return !containsPiece
+
 }
 
