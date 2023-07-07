@@ -188,17 +188,18 @@ function validateRookmove(target,currentPosition,targetPosition){
     if(((targetPosition % 8) === (currentPosition % 8) ) || (parseInt(targetPosition/8))===parseInt(currentPosition/8)){
         const targetOnSameFile = (targetPosition % 8 )===(currentPosition % 8)?true:false
 
-       // if(targetOnSameFile){
+        if(targetOnSameFile){
             return checkifFilecontainsPiece(target,currentPosition,targetPosition)
-        //}
+        }
        
     }
 }
 
 function checkifFilecontainsPiece(target,currentPosition,targetPosition){
     let containsPiece = false
-    console.log(target.firstChild.classList+"     "+NowPlays)
-    if(target.firstChild?.classList.contains(NowPlays)){
+    //console.log(target.firstChild.classList+"     "+NowPlays)
+    if(target?.classList.contains(NowPlays)){
+        console.log('invalid move')
         return containsPiece
     }
     squares.forEach(square=>{
