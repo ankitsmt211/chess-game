@@ -54,7 +54,7 @@ squares.forEach(square=>{
 })
 
 
-let chosenElemen
+let chosenElement
 let startPosition
 
 
@@ -64,7 +64,6 @@ function dragstart(e){
    // console.log(targetSquare)
 
    chosenElement = e.target
-   //console.log(chosenElement)
 
 }
 
@@ -74,25 +73,22 @@ function dragover(e){
 
 function dragdrop(e){
     e.stopPropagation()
-  //console.log(e.target)
-    //e.target.append(chosenElement)
+  
     const pieceExists = e.target.classList.contains('pieces')
     
     const validTurn = chosenElement.classList.contains(NowPlays)
 
-   // console.log(chosenElement.firstChild)
 
     const opponent = NowPlays==='black'?'white':'black'
     const isOpponentPiece = e.target?.classList.contains(opponent)
-    //console.log(e.target)
 
    console.log('is valid move? ',isValidMove(e.target))
-//    console.log('prev',e.target.previousSibling)
-//    console.log('next',e.target.nextSibling)
+
     if(validTurn){
         if(isOpponentPiece && isValidMove(e.target)){
             e.target.parentNode.append(chosenElement)
             e.target.remove()
+            console.log(chosenElement.classList)
             if(chosenElement.classList.contains('pawn')){
                 chosenElement.classList.add('moved')
     }
@@ -100,6 +96,7 @@ function dragdrop(e){
         }
 
         else if(isValidMove(e.target)){
+            chosenElement.classList.add('moved')
             e.target.append(chosenElement)
             changePlayer()
         }
@@ -140,11 +137,8 @@ function isValidMove(target){
     //to validate first pawn move
     const hasMovedOnce = chosenElement.classList.contains('moved')
     const targetPosition = parseInt(target.getAttribute('square-id')) || parseInt(target.parentNode.getAttribute('square-id'))
-   // console.log(target)
-  // console.log(chosenElement.classList.item(0))
-
- // console.log('targetPos '+targetPosition +'     '+'currentPos '+currentPosition +'   '+'diff '+(targetPosition-currentPosition))
   
+    console.log('start Position: '+startPosition+ '    targetPos: '+targetPosition)
     switch (chessman) {
         case 'pawn':
             return validatePawnMove(target,currentPosition,targetPosition,hasMovedOnce)
@@ -152,18 +146,15 @@ function isValidMove(target){
             break;
 
        case 'rook':
-            //check no in between pawns
-            //check if same colour chessman at targetPosition
-            //check if on same row or col
-            return validateRookmove(currentPosition,targetPosition)
+            return validateRookmove(target,currentPosition,targetPosition)
 
+            break;
        
     }
 }
 
 
 function validatePawnMove(target,currentPosition,targetPosition,hasMovedOnce){
-    
 
     if((targetPosition-currentPosition===7)||(targetPosition-currentPosition===9)){
         if(target.classList.contains('pieces')){
@@ -189,55 +180,60 @@ function validatePawnMove(target,currentPosition,targetPosition,hasMovedOnce){
         }
     }
 
-    // else{
-    //     //check +1 and -1 pos of targetpos
-       
-    // }
-
-    return false
+    else return false
 }
 
 
-function validateRookmove(currentPosition,targetPosition){
-    if((targetPosition%8===currentPosition%8) || (parseInt(targetPosition/8))===parseInt(currentPosition/8)){
-        const targetOnSameRank = (targetPosition%8)===(currentPosition%8)?true:false
+function validateRookmove(target,currentPosition,targetPosition){
+    if(((targetPosition % 8) === (currentPosition % 8) ) || (parseInt(targetPosition/8))===parseInt(currentPosition/8)){
+        const targetOnSameFile = (targetPosition % 8 )===(currentPosition % 8)?true:false
 
-        if(targetOnSameRank){
-            let matchTarget = currentPosition
-            console.log('targetPos '+targetPosition+' '+'current '+currentPosition)
-            //check if any square b/w currentPosition and targetPosition contains an opponent piece'
-            if((targetPosition<currentPosition) && matchTarget>=0){
-               
-                while(matchTarget!=targetPosition){
-                    matchTarget=matchTarget-8
-                    const checkElement = document.querySelector('[square-id="matchTarget"]')
-                    console.log('checkEle'+checkElement)
-                    if(checkElement.classList.contains('pieces')){
-                        return false
-                    }
-                    
-                }
-            }
-            else if(targetPosition>currentPosition && matchTarget<=63){
-                while(matchTarget!=targetPosition){
-                    matchTarget=matchTarget+8
-                    const checkElement = document.querySelector('[square-id="matchTarget"]')
-                   // console.log(checkElement)
-                    if(checkElement.classList.contains('pieces')){
-                        return false
-                    }
-                }
-            }
-        }
-
-        else{
-            //cover for same row
-
-        }
-
-        return true
-
+       // if(targetOnSameFile){
+            return checkifFilecontainsPiece(target,currentPosition,targetPosition)
+        //}
        
     }
+}
+
+function checkifFilecontainsPiece(target,currentPosition,targetPosition){
+    let containsPiece = false
+    console.log(target.firstChild.classList+"     "+NowPlays)
+    if(target.firstChild?.classList.contains(NowPlays)){
+        return containsPiece
+    }
+    squares.forEach(square=>{
+        const checkId = Number(square.getAttribute('square-id'))
+
+        //check forward
+        if(targetPosition > currentPosition){
+           if((checkId%8)===(currentPosition%8)){
+            if((checkId<targetPosition) && (checkId>currentPosition)){
+                //console.log(square.firstChild?.classList.contains('pieces') +'square id '+checkId)
+                if(square.firstChild? true:false){
+                   // console.log(square.firstChild.classList)
+                    if(square.firstChild.classList.contains('pieces')){
+                        containsPiece=true
+                    }
+                }
+            }
+           }
+        }
+
+        else if(targetPosition < currentPosition){
+            //check backward
+            if((checkId%8)===(currentPosition%8)){
+                if(checkId > targetPosition && checkId<currentPosition){
+                    if(square.firstChild? true:false){
+                       // console.log(square.firstChild.classList)
+                        if(square.firstChild.classList.contains('pieces')){
+                            containsPiece=true
+                        }
+                    }
+                }
+            }
+        }
+    })
+    //console.log('here')
+    return !containsPiece
 }
 
