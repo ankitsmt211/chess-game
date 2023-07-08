@@ -135,12 +135,12 @@ function isValidMove(target){
     console.log('start Position: '+startPosition+ '    targetPos: '+targetPosition)
     switch (chessman) {
         case 'pawn':
-            return validatePawnMove(target,currentPosition,targetPosition,hasMovedOnce)
+            return validatePawnMoves(target,currentPosition,targetPosition,hasMovedOnce)
            
             break;
 
        case 'rook':
-            return validateRookmove(target,currentPosition,targetPosition)
+            return validateRookMoves(target,currentPosition,targetPosition)
 
             break;
 
@@ -151,11 +151,16 @@ function isValidMove(target){
 
         case 'bishop':
             return validateBishopMoves(target,currentPosition,targetPosition)
+
+            break;
+
+        case 'queen':
+            return validateQueenMoves(target,currentPosition,targetPosition)
     }
 }
 
 
-function validatePawnMove(target,currentPosition,targetPosition,hasMovedOnce){
+function validatePawnMoves(target,currentPosition,targetPosition,hasMovedOnce){
 
     if((targetPosition-currentPosition===7)||(targetPosition-currentPosition===9)){
         if(target.classList.contains('pieces')){
@@ -187,7 +192,7 @@ function validatePawnMove(target,currentPosition,targetPosition,hasMovedOnce){
 }
 
 
-function validateRookmove(target,currentPosition,targetPosition){
+function validateRookMoves(target,currentPosition,targetPosition){
 
     if(((targetPosition % 8) === (currentPosition % 8) ) || (parseInt(targetPosition/8))===parseInt(currentPosition/8)){
         const targetOnSameFile = (targetPosition % 8 )===(currentPosition % 8)?true:false
@@ -347,4 +352,12 @@ function validateBishopMoves(target,currentPosition,targetPosition){
     }
 }
 
+
+function validateQueenMoves(target,currentPosition,targetPosition){
+    if(target?.classList.contains(NowPlays)){
+        return false
+    }
+
+    return validateBishopMoves(target,currentPosition,targetPosition) || validateRookMoves(target,currentPosition,targetPosition)
+}
 
