@@ -84,8 +84,6 @@ function dragdrop(e){
         if(isOpponentPiece && isValidMove(e.target)){
             e.target.parentNode.append(chosenElement)
             e.target.remove()
-            console.log(chosenElement.classList)
-            pieceMoved()
             changePlayer()
         }
 
@@ -94,7 +92,6 @@ function dragdrop(e){
                 chosenElement.classList.add('moved')
             }
             e.target.append(chosenElement)
-            pieceMoved()
             changePlayer()
         }
         
@@ -151,7 +148,9 @@ function isValidMove(target){
             return validateKnightMoves(target,currentPosition,targetPosition)
 
             break;
-       
+
+        case 'bishop':
+            return validateBishopMoves(target,currentPosition,targetPosition)
     }
 }
 
@@ -332,6 +331,20 @@ function validateKnightMoves(target,currentPosition,targetPosition){
         return false
     }
 
+}
+
+
+function validateBishopMoves(target,currentPosition,targetPosition){
+    if(target?.classList.contains(NowPlays)){
+        return false
+    }
+
+    if((targetPosition%7===currentPosition%7 )|| (targetPosition%9===currentPosition%9)){
+        return true
+    }
+    else{
+        return false
+    }
 }
 
 
