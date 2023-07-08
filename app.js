@@ -156,6 +156,13 @@ function isValidMove(target){
 
         case 'queen':
             return validateQueenMoves(target,currentPosition,targetPosition)
+        
+            break;
+
+        case 'king':
+            return validateKingMoves(target,currentPosition,targetPosition)
+            
+            break;
     }
 }
 
@@ -359,5 +366,30 @@ function validateQueenMoves(target,currentPosition,targetPosition){
     }
 
     return validateBishopMoves(target,currentPosition,targetPosition) || validateRookMoves(target,currentPosition,targetPosition)
+}
+
+function validateKingMoves(target,currentPosition,targetPosition){
+    if(target?.classList.contains(NowPlays)){
+        return false
+    }
+
+    const possiblePositions = new Set()
+
+    possiblePositions.add(currentPosition-1)
+    possiblePositions.add(currentPosition+1)
+    possiblePositions.add(currentPosition-8)
+    possiblePositions.add(currentPosition+8)
+    possiblePositions.add(currentPosition-7)
+    possiblePositions.add(currentPosition+7)
+    possiblePositions.add(currentPosition-9)
+    possiblePositions.add(currentPosition+9)
+
+    if(possiblePositions.has(targetPosition)){
+        return true
+    }
+
+    else{
+        return false
+    }
 }
 
