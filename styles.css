@@ -44,3 +44,15 @@
     margin-top: 50px;
     font-size: 50px;
 }
+
+
+div#info{
+    height: 90px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+div#points-white,div#points-black{
+    display: inline-block;
+    font-size: 40px;
+}

@@ -8,6 +8,9 @@ let NowPlays = 'black'
 
 playerTurnDisplay.textContent = 'black'
 
+let pointsWhite=0
+let pointsBlack=0
+
 
 
 const startPieces = [rookBlack,knightBlack,bishopBlack,queenBlack,kingBlack,bishopBlack,knightBlack,rookBlack,
@@ -18,6 +21,9 @@ const startPieces = [rookBlack,knightBlack,bishopBlack,queenBlack,kingBlack,bish
     emptySquare,emptySquare,emptySquare,emptySquare,emptySquare,emptySquare,emptySquare,emptySquare,
     pawnWhite,pawnWhite,pawnWhite,pawnWhite,pawnWhite,pawnWhite,pawnWhite,pawnWhite,
     rookWhite,knightWhite,bishopWhite,kingWhite,queenWhite,bishopWhite,knightWhite,rookWhite]
+
+
+const pointsMap = {"queen":9,"bishop":3, "knight":3,"rook":5,"pawn":1}
 
 
 function createBoard(){
@@ -57,6 +63,27 @@ squares.forEach(square=>{
 let chosenElement
 let startPosition
 
+function displayPoints(currentPlayer){
+    if(currentPlayer==='black'){
+        document.querySelector('#points-black').innerText="Black: "+pointsBlack
+        return
+    }
+
+    document.querySelector('#points-white').innerText="White: "+pointsWhite
+}
+
+function updatePoints(currentPlayer,pieceAcquired){
+    if(currentPlayer==='black'){
+        pointsBlack+=pointsMap[pieceAcquired]
+
+    }
+
+    else{
+        pointsWhite+=pointsMap[pieceAcquired]
+    }
+
+    displayPoints(currentPlayer)
+}
 
 function dragstart(e){
     startPosition = e.target.parentNode.getAttribute('square-id')
@@ -84,6 +111,7 @@ function dragdrop(e){
         if(isOpponentPiece && isValidMove(e.target)){
             e.target.parentNode.append(chosenElement)
             e.target.remove()
+            updatePoints(NowPlays,e.target.classList.item(0))
             changePlayer()
         }
 
@@ -124,9 +152,16 @@ function reverseIds(){
 }
 
 function isValidMove(target){
+
+   
     const currentPosition = parseInt(startPosition)
     //grabs the class at first index aka colour of chessmen
     const chessman = chosenElement.classList.item(0)
+
+    if(isCheck() && chessman !=='king'){
+        console.log("move your king, it's check")
+        return false
+    }
 
     //to validate first pawn move
     const hasMovedOnce = chosenElement.classList.contains('moved')
@@ -137,37 +172,35 @@ function isValidMove(target){
         case 'pawn':
             return validatePawnMoves(target,currentPosition,targetPosition,hasMovedOnce)
            
-            break;
 
        case 'rook':
             return validateRookMoves(target,currentPosition,targetPosition)
 
-            break;
-
         case 'knight':
             return validateKnightMoves(target,currentPosition,targetPosition)
 
-            break;
 
         case 'bishop':
             return validateBishopMoves(target,currentPosition,targetPosition)
 
-            break;
 
         case 'queen':
             return validateQueenMoves(target,currentPosition,targetPosition)
         
-            break;
 
         case 'king':
             return validateKingMoves(target,currentPosition,targetPosition)
             
-            break;
     }
 }
 
 
 function validatePawnMoves(target,currentPosition,targetPosition,hasMovedOnce){
+
+    // if(isCheck()){
+    //     console.log("king in check, please move king")
+    //     return
+    // }
 
     if((targetPosition-currentPosition===7)||(targetPosition-currentPosition===9)){
         if(target.classList.contains('pieces')){
@@ -391,5 +424,75 @@ function validateKingMoves(target,currentPosition,targetPosition){
     else{
         return false
     }
+}
+
+function isCheck(){
+    const opponent = NowPlays==='black'?'black':'white'
+    let opponentPieces
+    if(opponent==='black'){
+        opponentPieces = document.querySelectorAll('.pieces.black')
+
+    }
+
+    else{
+        opponentPieces = document.querySelectorAll('.pieces.white')
+    }
+
+    opponentPieces.forEach(piece=>{
+        //check if each piece is attacking king?
+        let pieceType = piece.classList.item(0)
+
+        let king = getKing()
+        let moved=true
+
+        let attacksKing=false
+        currentPosition = piece.getAttribute('square-id')
+        targetPosition = king.getAttribute('square-id')
+
+        switch (pieceType) {
+            case 'pawn':
+                attacksKing = validatePawnMoves(king,currentPosition,targetPosition,moved)
+               
+                break;
+    
+           case 'rook':
+                attacksKing = validateRookMoves(king,currentPosition,targetPosition)
+    
+                break;
+    
+            case 'knight':
+                attacksKing = validateKnightMoves(king,currentPosition,targetPosition)
+    
+                break;
+    
+            case 'bishop':
+                attacksKing = validateBishopMoves(king,currentPosition,targetPosition)
+    
+                break;
+    
+            case 'queen':
+                attacksKing = validateQueenMoves(king,currentPosition,targetPosition)
+            
+                break;
+        }
+
+        if(attacksKing===true) return true;
+
+
+    })
+
+}
+
+function getKing(){
+    const kingAttacked = NowPlays==='black'?'black':'white'
+    let king
+    if(kingAttacked==='black'){
+        king = document.querySelector('.pieces.king.black') 
+    }
+    else{
+        king = document.querySelector('.pieces.king.white')
+    }
+
+    return king
 }
 
